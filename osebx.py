@@ -32,8 +32,6 @@ def get_todays_price():
         # Parse the HTML content of the page
         soup = BeautifulSoup(response.text, 'html.parser')
         
-        # Find the element containing the value you want to scrape
-        # For example, if you want to scrape the value of a <span> element with id 'target_value':
         target_element = soup.find('span', id='data-value')
         if target_element:
             # Extract the value from the element
