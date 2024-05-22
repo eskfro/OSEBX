@@ -87,11 +87,15 @@ def plotter(x, y, Px, Py, price0, a, b):
     def exponential_func(x, a, b):
         return a * np.exp(b * x)
     
-    labels = ["10% yearly growth", " 9% yearly growth", " 8% yearly growth"]
+    slope, intercept = linear_regression(x, y)
+    coef = poly2_regression(x, y)
+
+    labels = ["10% yearly growth", "09% yearly growth", "08% yearly growth"]
     t = np.arange(5000)
     plt.figure("OSEBX")
     plt.title("OSEBX 2014-2024")
     plt.ylim([400, 1600])
+
     plt.scatter(Px, Py, color="red", label="today")
     # plt.plot(regX, regY, label="exponential regression line", color="magenta")
     plt.plot(x, y)
@@ -99,6 +103,9 @@ def plotter(x, y, Px, Py, price0, a, b):
     for i, f in enumerate(funcs):
         plt.plot(t, f, label=labels[i])
     plt.plot(t, exponential_func(t, a, b), label="exponential fit")
+    # plt.plot(t, slope * t + intercept, label="1st degree fit")
+    # plt.plot(t, coef[0]*t**2 + coef[1]*t + coef[0] + price0, label="2nd degree fit")
+
     plt.legend()
     plt.grid()
     plt.show()
@@ -124,6 +131,7 @@ def print_result(price, day, price0):
     print()
 
 from scipy.optimize import curve_fit
+
 def exponential_regression(x, y):
     # Define the exponential function
     def exponential_func(x, a, b):
@@ -136,6 +144,13 @@ def exponential_regression(x, y):
     print("b =", b)
     return a, b
 
+def linear_regression(x, y):
+    slope, intercept = np.polyfit(x, y, 1)
+    return slope, intercept
+
+def poly2_regression(x, y):
+    coef = np.polyfit(x, y, 2)
+    return coef
     
 if run_main: main()
 
