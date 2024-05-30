@@ -12,6 +12,8 @@ from reader import K_slash
 from reader import filename
 
 from manual_data import get_manual_data
+from manual_data import remove_top_row
+from manual_data import add_data
 
 run_main = 1
 
@@ -20,20 +22,19 @@ file = "2014-2024.txt"
 #main 
 def main(): 
     print("\nosebx.exe\nosebx.py\n\nloading program ...\n")
+    printer()
     go = True
     while go:
-        print()
+        #input 
         mode, this_price = inputter()
-        print()
-        if mode == 0:
-            return
-        if mode == 1:
-            print_days_since_date()
-            continue
+
+        #checker
+        if mode == -1: continue
+        if mode == 0:  return
         
         if (mode != 10 and mode != 24):
-            print("\nerror: input out of range\n")
-            return
+            print("error: mode error")
+            continue
         else:
             if mode == 10:
                 days, prices, K, price0 = organize_data(file)
@@ -94,29 +95,59 @@ def date_to_day(date, K):
 
 def const_K(d0, m0, y0):
     return d0 + m0 * 30 + y0 * 365
+
+def printer():
+    #ui print
+    print("-------------------------------------------------")
+    print(f"Input       | Day: {days_since_date_new()}")
+    print("-------------------------------------------------")
+    print()
+    print("[enter]     : Quit")
+    print("[0]         : Add    price data")
+    print("[1]         : Remove price data")
+    print("[10 price]  : 10 year plot")
+    print("[24 price]  : 24 year plot")
+    print()
  
 def inputter():
     #Input from cmd
-    print("-------------------------------------------------")
-    print("input")
-    print("-------------------------------------------------")
-    print()
-    print("[0]         : quit")
-    print("[1]         : for days since beginning (10 years)")
-    print("[10 price]  : for 10 year plot")
-    print("[24 price]  : for 24 year plot")
-    print()
-    inp = input(" >>> ")
-    if len(inp) == 1:
-        if int(inp) == 0:
-            return 0, 0
-        if int(inp) == 1:
-            return 1, 1
 
-    inp = inp.split(sep=" ")
-    mode = int(inp[0])
-    this_price = int(inp[1])
-    return mode, this_price
+    inp = input(" >>> ")
+
+    if inp == "": return 0, 0
+
+    if len(inp) == 1 and inp.isdigit() == True:
+        #0 add price
+        if int(inp) == 0: 
+            todays_price = input("OSEBX price today [enter to exit] >>> ")
+            if todays_price == "":
+                return -1, -1
+            if len(todays_price) == 4 and todays_price.isdigit():
+                add_data(days_since_date_new(), int(todays_price))
+            return -1, -1
+        
+        #1 remove top row
+        if int(inp) == 1:
+            sure = input("Are you sure you want to delete the latest data? [y/n] >>> ")
+            if sure == "y": 
+                remove_top_row()
+            return -1, -1
+    
+        return -1, -1
+    
+    if (len(inp) != 7): 
+        return -1, -1
+    try:
+        inp = inp.split(sep=" ")
+        mode = int(inp[0])
+        this_price = int(inp[1])
+        return mode, this_price
+    except ValueError:
+        print("Error: Value error")
+        return -1, -1
+    except IndexError:
+        print("Error: Index error")
+        return -1, -1
 
 def organize_data(filename):
     #Sorting the data string from data.py
@@ -126,7 +157,7 @@ def organize_data(filename):
         rows = [element.rstrip("\t").split("\t") for element in rows]
 
     first_date = rows[-1][0].split(".")
-    print("\nfirst date: ", first_date)
+    # print("\nfirst date: ", first_date)
     d0, m0, y0 = int(first_date[0]), int(first_date[1]), int(first_date[2])
     K = const_K(d0, m0, y0)
     days   = [date_to_day(row[0], K) for row in rows]
@@ -150,8 +181,8 @@ def plotter(x, y, Px, Py, price0, a, b, mode):
     fig, ax = plt.subplots()
     fig.canvas.manager.set_window_title(title)
     plt.title(title)
-    plt.xlabel("days", rotation=0)
-    plt.ylabel("points", rotation=0)
+    plt.xlabel("Days", rotation=0)
+    plt.ylabel("Points", rotation=0)
 
     if mode == 24: 
         t = np.arange(10000)
@@ -193,13 +224,13 @@ def print_result(price, day, price0, a, b):
     if ratio >  0.01:        advice = " Buy"
     if ratio >  0.03:        advice = " Strong buy" 
     print("-------------------------------------------------")
-    print("results")
+    print("Results")
     print("-------------------------------------------------")
-    print("~   price0          -> ", price0)
-    print("~   current  price  -> ", price)
-    print("~   expected price  -> ", expected_price)
-    print("~   difference      -> ", round((ratio * -100), 3),  "%")
-    print("~   advice          -> " + advice)
+    print("~   Price0          -> ", price0)
+    print("~   Current  price  -> ", price)
+    print("~   Expected price  -> ", expected_price)
+    print("~   Difference      -> ", round((ratio * -100), 3),  "%")
+    print("~   Advice          -> " + advice)
     print()
 
 from scipy.optimize import curve_fit
