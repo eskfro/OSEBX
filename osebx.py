@@ -228,7 +228,7 @@ def print_result(price, day, price0, a, b):
     print("-------------------------------------------------")
     print("~   Price0          -> ", price0)
     print("~   Current  price  -> ", price)
-    print("~   Expected price  -> ", expected_price)
+    print("~   Expected price  -> ", round(expected_price, 0))
     print("~   Difference      -> ", round((ratio * -100), 3),  "%")
     print("~   Advice          -> " + advice)
     print()
