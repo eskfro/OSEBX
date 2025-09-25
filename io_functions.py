@@ -128,7 +128,7 @@ def inputter():
     # return -1, -1 to continue loop in main()
     # return  0,  0 to exit     loop in main()
 
-    available_modes = [10, 11, 24]
+    available_modes = [10, 11, 24, 50]
 
     inp = input(" >>> ")
 
