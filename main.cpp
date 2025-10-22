@@ -1,7 +1,13 @@
-#include <cstdlib>
-// #include <pybind11/embed.h>
+#include <cstdlib>  
+#include <string>   
+
+#define PYTHON_PATH "C:/Users/eskfr/anaconda3/envs/apienv/python.exe"
+#define SCRIPT "-m source.osebx.py"
 
 int main() {
-    system("C:/Users/eskfr/anaconda3/envs/apienv/python.exe osebx.py");
+    
+    std::string command = std::string(PYTHON_PATH) + " " + SCRIPT;
+    system(command.c_str());
+
     return 0;
 }
